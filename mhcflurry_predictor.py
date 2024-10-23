@@ -12,21 +12,20 @@ MIN_SEQ_LEN = 8
 MAX_SEQ_LEN = 12
 
 def run_mhcflurry():
-    alleles = list(open('./data/alleles.csv', 'r'))
-    peptides = list(open('./data/peptides.csv', 'r'))
+    alleles = pd.read_csv('./data/alleles.csv', header=None).values[:, 0].tolist()
+    peptides = pd.read_csv('./data/peptides.csv', header=None).values[:, 0].tolist()
     n_ignored_peptides = 0
     with open('./data/mhcflurry_input.csv', 'w') as mhcflurry_input:
         mhcflurry_input.write('allele,peptide\n')
         for peptide in peptides:
-            peptide = peptide.strip()
             if len(peptide) < MIN_SEQ_LEN or len(peptide) > MAX_SEQ_LEN:
                 n_ignored_peptides += 1
                 continue
             for allele in alleles:
-                mhcflurry_input.write(allele.strip() + ',' + peptide + '\n')
+                mhcflurry_input.write(allele + ',' + peptide + '\n')
     print('Input file prepared.')
     if n_ignored_peptides != 0:
-        print(f'Peptides length out of [{MIN_SEQ_LEN}, {MAX_SEQ_LEN}] are not supported by MHCflurry. {n_ignored_peptides} peptides are ignored')
+        print(f'Peptides length out of [{MIN_SEQ_LEN}, {MAX_SEQ_LEN}] are not filtered out. {n_ignored_peptides} peptides are ignored')
 
     subprocess.run('mhcflurry-predict ./data/mhcflurry_input.csv --out ./data/mhcflurry_output.csv', shell=True)
     print('Output file generated.')
