@@ -77,7 +77,6 @@ def draw_binding_affinity():
         df.loc[row['Peptide'], row['Allele']] = row['Aff_nM']
     data = df.to_numpy().astype(np.float64)
 
-    max_bas = np.min(data, axis=1)
     max_cols = np.argmin(data, axis=1)
     strong_peptides = results['Peptide'].loc[results['Binder'] == 'Strong'].drop_duplicates().values
     strong_indices = np.array([peptide in strong_peptides for peptide in peptides])

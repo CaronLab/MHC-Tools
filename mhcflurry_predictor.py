@@ -81,7 +81,7 @@ def draw_binding_affinity():
     df = pd.DataFrame(index=peptides, columns=alleles)
     for i in range(len(results)):
         row = results.iloc[i]
-        df[row['allele']][row['peptide']] = row['mhcflurry_affinity']
+        df.loc[row['Peptide'], row['Allele']] = row['mhcflurry_affinity']
     data = df.to_numpy().astype(np.float64)
 
     max_bas = np.min(data, axis=1)
