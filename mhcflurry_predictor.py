@@ -34,6 +34,12 @@ def run_mhcflurry():
 
 def analyze_binders():
     results = pd.read_csv('./data/mhcflurry_output.csv')
+    results['Binder'] = ''
+    results.loc[results['mhcflurry_affinity'] <= STRONG_BA_THRESHOLD, 'Binder'] = 'Strong'
+    results.loc[(results['mhcflurry_affinity'] > STRONG_BA_THRESHOLD) * (results['mhcflurry_affinity'] <= WEAK_BA_THRESHOLD), 'Binder'] = 'Weak'
+    results.loc[results['mhcflurry_affinity'] > WEAK_BA_THRESHOLD, 'Binder'] = 'Non-binder'
+    results = results[results.columns[:2].append(results.columns[-1:]).append(results.columns[2:-1])]
+    results.to_csv('./data/mhcflurry_output.csv', index=False)
 
     stat = pd.DataFrame(columns=['Strong Binders', 'Weak Binders', 'None Binders', 'Strong Ratio', 'Weak Ratio', 'None Ratio'])
     for allele in results['allele'].drop_duplicates():
@@ -97,7 +103,7 @@ def draw_binding_affinity():
 
 
 if __name__ == '__main__':
-    # run_mhcflurry()
+    run_mhcflurry()
     analyze_binders()
     draw_binding_affinity()
     print('Have a nice day.')
