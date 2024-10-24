@@ -57,20 +57,20 @@ def analyze_binders():
     print(f'Total peptides: {total_peptides}')
 
     strong_binders = results['peptide'].loc[results['mhcflurry_affinity'] <= STRONG_BA_THRESHOLD]
-    strong_binders.to_csv('./data/mhcflurry_output_sb.csv', index=False, header=False)
     strong_binders_deduplicate = strong_binders.drop_duplicates()
+    strong_binders_deduplicate.to_csv('./data/mhcflurry_output_sb.csv', index=False, header=False)
     print(f'Strong binders (peptide): {len(strong_binders_deduplicate)}')
 
     results = results.loc[-results['peptide'].isin(strong_binders_deduplicate)]
     weak_binders = results['peptide'].loc[results['mhcflurry_affinity'] <= WEAK_BA_THRESHOLD]
-    weak_binders.to_csv('./data/mhcflurry_output_wb.csv', index=False, header=False)
     weak_binders_deduplicate = weak_binders.drop_duplicates()
+    weak_binders_deduplicate.to_csv('./data/mhcflurry_output_wb.csv', index=False, header=False)
     print(f'Weak binders (peptide): {len(weak_binders_deduplicate)}')
 
     results = results.loc[-results['peptide'].isin(weak_binders_deduplicate)]
     non_binders = results['peptide'].loc[results['mhcflurry_affinity'] > WEAK_BA_THRESHOLD]
-    non_binders.to_csv('./data/mhcflurry_output_nb.csv', index=False, header=False)
     non_binders_deduplicate = non_binders.drop_duplicates()
+    non_binders_deduplicate.to_csv('./data/mhcflurry_output_nb.csv', index=False, header=False)
     print(f'Non-binders (peptide): {len(non_binders_deduplicate)}')
 
 
@@ -81,7 +81,7 @@ def draw_binding_affinity():
     df = pd.DataFrame(index=peptides, columns=alleles)
     for i in range(len(results)):
         row = results.iloc[i]
-        df.loc[row['Peptide'], row['Allele']] = row['mhcflurry_affinity']
+        df.loc[row['peptide'], row['allele']] = row['mhcflurry_affinity']
     data = df.to_numpy().astype(np.float64)
 
     max_bas = np.min(data, axis=1)
