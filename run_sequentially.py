@@ -61,5 +61,6 @@ def run(tools=['NetMHCpan', 'MHCflurry'], min_seq_length=8, max_seq_length=15):
     result_df.to_csv(f'./output/sequentially_{tools_str}.csv', index=False)
 
 if __name__ == '__main__':
+    # NetMHCpan NetMHCIIpan MixMHCpred MixMHC2pred MHCflurry BigMHC
     run(tools=['MHCflurry', 'NetMHCpan'], min_seq_length=8, max_seq_length=15)
     print('Have a nice day.')
