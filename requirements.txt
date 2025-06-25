@@ -1,0 +1,8 @@
+
+numpy
+pandas==2.2.3
+mhcflurry==2.1.4
+matplotlib
+seaborn
+mhcnames
+tqdm
