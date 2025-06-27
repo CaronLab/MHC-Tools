@@ -24,6 +24,7 @@ source ~/.bashrc
 ```text
 conda create -n mhctools python=3.10
 conda activate mhctools
+cd /home/to/project_folder
 pip install -r requirements.txt
 ```
 
