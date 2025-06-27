@@ -27,6 +27,17 @@ conda activate mhctools
 pip install -r requirements.txt
 ```
 
+* MHCflurry environment
+```text
+mhcflurry-downloads fetch models_class1_presentation
+```
+
+* NetMHCpan environment
+```text
+sudo apt update
+sudo apt install tcsh
+```
+
 ### Execution
 ```text
 python ./run_toolname.py

@@ -6,7 +6,7 @@ from utils.peptide import filter_peptides_by_length
 
 
 def run_mixmhcpred(min_seq_length, max_seq_length, mhc_class='I'):
-    alleles = pd.read_csv('./input/alleles.csv', header=None).values[:, 0].tolist()
+    alleles = pd.read_csv('./input/alleles-II.csv', header=None).values[:, 0].tolist()
     alleles = [allele.replace('_', '-') for allele in alleles]
     peptides = pd.read_csv('./input/peptides.csv', header=None).values[:, 0].tolist()
     peptides = filter_peptides_by_length(peptides, min_seq_length, max_seq_length)
