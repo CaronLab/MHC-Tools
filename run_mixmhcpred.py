@@ -21,5 +21,5 @@ def run_mixmhcpred(min_seq_length, max_seq_length, mhc_class='I'):
 
 
 if __name__ == '__main__':
-    run_mixmhcpred(8, 15, 'I')
+    run_mixmhcpred(8, 14, 'I')
     print('Have a nice day.')
