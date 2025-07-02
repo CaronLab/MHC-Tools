@@ -6,6 +6,7 @@ from predictors.mixmhcpred_helper import MixMhcPredHelper
 from predictors.mhcflurry_helper import MhcFlurryHelper
 from predictors.bigmhc_helper import BigMhcHelper
 from utils.peptide import filter_peptides_by_length
+from utils.logo import draw_logo
 
 
 
@@ -59,8 +60,30 @@ def run(tools=['NetMHCpan', 'MHCflurry'], min_seq_length=8, max_seq_length=15):
     result_df.sort_values(by='Peptide', inplace=True)
     tools_str = '_'.join(tools)
     result_df.to_csv(f'./output/sequentially_{tools_str}.csv', index=False)
+    return result_df
+
+def draw_best_allele_logo(result_df):
+    print(f'Generating motif logos.')
+    alleles = result_df['Best_Allele'].unique().tolist()
+    strong_df = result_df[result_df['Binder'] == 'Strong']
+    weak_df = result_df[result_df['Binder'] == 'Weak']
+    non_binder_df = result_df[~result_df['Binder'].isin(['Strong', 'Weak'])]
+
+    for allele in alleles:
+        strong_peptides = strong_df[strong_df['Best_Allele'] == allele]['Peptide'].unique().tolist()
+        weak_peptides = weak_df[weak_df['Best_Allele'] == allele]['Peptide'].unique().tolist()
+        draw_logo(strong_peptides, aa_len=9, figure_name=f'{allele}_strong({len(strong_peptides)}).png')
+        draw_logo(weak_peptides, aa_len=9, figure_name=f'{allele}_weak({len(weak_peptides)}).png')
+        binder_peptides = strong_peptides + weak_peptides
+        draw_logo(binder_peptides, aa_len=9, figure_name=f'{allele}_binder({len(binder_peptides)}).png')
+
+    non_binder_peptides = non_binder_df['Peptide'].unique().tolist()
+    draw_logo(non_binder_peptides, aa_len=9, figure_name=f'non_binder({len(non_binder_peptides)}).png')
 
 if __name__ == '__main__':
     # NetMHCpan NetMHCIIpan MixMHCpred MixMHC2pred MHCflurry BigMHC
-    run(tools=['MHCflurry', 'NetMHCpan'], min_seq_length=8, max_seq_length=15)
+    tools = ['MHCflurry', 'NetMHCpan']
+    result_df = run(tools=tools, min_seq_length=8, max_seq_length=15)
+    # result_df = pd.read_csv(f'./output/sequentially.csv')
+    draw_best_allele_logo(result_df)
     print('Have a nice day.')
