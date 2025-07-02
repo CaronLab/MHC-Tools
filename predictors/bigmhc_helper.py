@@ -14,6 +14,7 @@ from tqdm import tqdm
 from mhcnames import normalize_allele_name
 
 from predictors.base_helper import BaseHelper
+from utils.allele import get_normalized_allele_name
 from utils.constants import EPSILON
 
 
@@ -96,7 +97,7 @@ class BigMhcHelper(BaseHelper):
         result_df = pd.read_csv(self.output_path, index_col=False)
         self.pred_df = pd.DataFrame()
         self.pred_df['Peptide'] = result_df['pep']
-        self.pred_df['Allele'] = result_df['mhc']
+        self.pred_df['Allele'] = [get_normalized_allele_name(a) for a in result_df['mhc']]
         self.pred_df['EL_Rank'] = result_df['BigMHC_EL'] * 100
         self.pred_df['Binder'] = 'Non-binder'
         self.pred_df.loc[self.pred_df['EL_Rank'] <= 2.0, 'Binder'] = 'Weak'

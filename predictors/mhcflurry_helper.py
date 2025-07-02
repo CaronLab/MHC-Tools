@@ -6,6 +6,7 @@ import pandas as pd
 from pathlib import Path
 from predictors.base_helper import BaseHelper
 from mhcnames import normalize_allele_name
+from utils.allele import get_normalized_allele_name
 
 class MhcFlurryHelper(BaseHelper):
     def __init__(self,
@@ -51,7 +52,7 @@ class MhcFlurryHelper(BaseHelper):
         result_df = pd.read_csv(results_file, index_col=False)
         self.pred_df = pd.DataFrame()
         self.pred_df['Peptide'] = result_df['peptide']
-        self.pred_df['Allele'] = result_df['allele']
+        self.pred_df['Allele'] = [get_normalized_allele_name(a) for a in result_df['allele']]
         self.pred_df['EL_Rank'] = result_df['mhcflurry_presentation_percentile']
         self.pred_df['Binder'] = 'Non-binder'
         self.pred_df.loc[self.pred_df['EL_Rank'] <= 2.0, 'Binder'] = 'Weak'

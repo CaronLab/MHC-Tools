@@ -12,7 +12,7 @@ from mhcnames import normalize_allele_name
 
 from predictors.base_helper import BaseHelper
 from utils.allele import prepare_class_I_alleles, prepare_class_II_alleles
-from utils.constants import EPSILON
+from utils.allele import get_normalized_allele_name
 
 
 class MixMhcPredHelper(BaseHelper):
@@ -95,7 +95,7 @@ class MixMhcPredHelper(BaseHelper):
                     continue
                 peptide = result_df.loc[i, 'Peptide']
                 column_name = result_df.columns[j]
-                allele = column_name[column_name.find('_') + 1:]
+                allele = get_normalized_allele_name(column_name[column_name.find('_') + 1:])
                 # allele = result_df.columns[j].split('_')[1]
                 el_rank = result_df.iloc[i, j]
                 if el_rank == 'NA':

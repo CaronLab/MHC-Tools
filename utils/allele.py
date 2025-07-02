@@ -1,5 +1,5 @@
 from typing import List
-from mhcnames import normalize_allele_name, compact_allele_name
+from mhcnames import normalize_allele_name
 
 
 def prepare_class_I_alleles(alleles: List[str], avail_alleles: List[str]):
@@ -102,6 +102,12 @@ def prepare_class_II_alleles(alleles: List[str], avail_alleles: List[str]):
                     paired_alleles.append(allele)
                     break
     return paired_alleles
+
+
+def get_normalized_allele_name(allele: str):
+    normed_allele = normalize_allele_name(allele.replace('__', '-'))
+    normed_allele = normed_allele.replace('HLA-', '').replace('*', '').replace(':', '')
+    return normed_allele
 
 if __name__ == '__main__':
     alleles = prepare_class_II_alleles(['DRB1*04:05', 'DRB1*15:01', 'DRB4*01:03', 'DRB5*01:01', 'DQB1*03:02', 'DQB1*06:02', 'DQA1*01:02', 'DQA1*03:03', 'DPB1*104:01', 'DPB1*04:01', 'DPA1*01:03'])

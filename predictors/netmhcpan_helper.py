@@ -12,7 +12,7 @@ from uuid import uuid4
 from mhcnames import normalize_allele_name
 
 from predictors.base_helper import BaseHelper
-from utils.allele import prepare_class_II_alleles, prepare_class_I_alleles
+from utils.allele import prepare_class_II_alleles, prepare_class_I_alleles, get_normalized_allele_name
 from utils.peptide import remove_previous_and_next_aa, remove_modifications, replace_uncommon_aas
 from utils.job import Job
 from tqdm.contrib.concurrent import process_map
@@ -240,10 +240,11 @@ class NetMHCpanHelper(BaseHelper):
         df_columns = ['Peptide', 'Allele', 'EL_score', 'EL_Rank', 'Aff_Score', 'Aff_Rank', 'Aff_nM', 'Binder']
         data = []
         for allele in self.alleles:
+            normed_allele = get_normalized_allele_name(allele)
             for pep in self.peptides:
                 # netmhc_pep = self.netmhcpan_peptides[pep]
                 data.append([pep,
-                             allele,
+                             normed_allele,
                              self.predictions[pep][allele]['el_score'],
                              self.predictions[pep][allele]['el_rank'],
                              self.predictions[pep][allele]['aff_score'],
