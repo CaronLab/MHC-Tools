@@ -73,6 +73,28 @@ blosum_matrix = pd.DataFrame([
      0.0165, 0.0329, 0.0494, 0.0055, 0.0206, 0.2689]
 ], columns=aas)
 
+color_map = {
+    'A': '#000000',
+    'R': '#0000FF',
+    'N': '#00D900',
+    'D': '#E60000',
+    'C': '#000000',
+    'Q': '#00D900',
+    'E': '#E60000',
+    'G': '#00D900',
+    'H': '#0000FF',
+    'I': '#000000',
+    'L': '#000000',
+    'K': '#0000FF',
+    'M': '#000000',
+    'F': '#000000',
+    'P': '#000000',
+    'S': '#00D900',
+    'T': '#00D900',
+    'W': '#000000',
+    'Y': '#00D900',
+    'V': '#000000'
+}
 
 def sequence_identity(seq1, seq2):
     """Compute fraction identity between two same-length sequences."""
@@ -140,7 +162,7 @@ def draw_logo(sequences, aa_len=9, figure_name=None):
     df = (prob_df_clipped * np.sign(kld_df)).mul(kld_df.sum(axis=1), axis=0)
 
     fig, ax = plt.subplots(figsize=(4, 3), dpi=300)
-    logomaker.Logo(df, ax=ax, font_name='DejaVu Sans Mono', color_scheme='chemistry', flip_below=False, vsep=0.005)
+    logomaker.Logo(df, ax=ax, font_name='DejaVu Sans Mono', color_scheme=color_map, flip_below=False, vsep=0.005)
     ax.set_xticks(range(df.shape[0]))
     ax.set_xticklabels((range(1, df.shape[0] + 1)))
     ax.set_ylabel("Bits")
