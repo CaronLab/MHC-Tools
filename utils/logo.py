@@ -160,9 +160,10 @@ def draw_logo(sequences, aa_len=9, figure_name=None):
         q = max(blosum62_background.get(aa, epsilon), epsilon)
         kld_df[aa] = p * np.log2(p / q)
     df = (prob_df_clipped * np.sign(kld_df)).mul(kld_df.sum(axis=1), axis=0)
+    vsep = (df.max().max() - df.min().min()) * 0.003
 
     fig, ax = plt.subplots(figsize=(4, 3), dpi=300)
-    logomaker.Logo(df, ax=ax, font_name='DejaVu Sans Mono', color_scheme=color_map, flip_below=False, vsep=0.005)
+    logomaker.Logo(df, ax=ax, font_name='DejaVu Sans Mono', color_scheme=color_map, flip_below=False, vsep=vsep)
     ax.set_xticks(range(df.shape[0]))
     ax.set_xticklabels((range(1, df.shape[0] + 1)))
     ax.set_ylabel("Bits")
