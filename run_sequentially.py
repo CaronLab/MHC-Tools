@@ -62,7 +62,7 @@ def run(tools=['NetMHCpan', 'MHCflurry'], min_seq_length=8, max_seq_length=15):
     result_df.to_csv(f'./output/sequentially_{tools_str}.csv', index=False)
     return result_df
 
-def draw_best_allele_logo(result_df):
+def draw_best_allele_logo(result_df, aa_len=9):
     print(f'Generating motif logos.')
     alleles = result_df['Best_Allele'].unique().tolist()
     strong_df = result_df[result_df['Binder'] == 'Strong']
@@ -72,18 +72,21 @@ def draw_best_allele_logo(result_df):
     for allele in alleles:
         strong_peptides = strong_df[strong_df['Best_Allele'] == allele]['Peptide'].unique().tolist()
         weak_peptides = weak_df[weak_df['Best_Allele'] == allele]['Peptide'].unique().tolist()
-        draw_logo(strong_peptides, aa_len=9, figure_name=f'{allele}_strong({len(strong_peptides)}).png')
-        draw_logo(weak_peptides, aa_len=9, figure_name=f'{allele}_weak({len(weak_peptides)}).png')
+        draw_logo(strong_peptides, aa_len=aa_len, figure_name=f'{allele}_strong({len(strong_peptides)}).png')
+        draw_logo(weak_peptides, aa_len=aa_len, figure_name=f'{allele}_weak({len(weak_peptides)}).png')
         binder_peptides = strong_peptides + weak_peptides
-        draw_logo(binder_peptides, aa_len=9, figure_name=f'{allele}_binder({len(binder_peptides)}).png')
+        draw_logo(binder_peptides, aa_len=aa_len, figure_name=f'{allele}_binder({len(binder_peptides)}).png')
 
     non_binder_peptides = non_binder_df['Peptide'].unique().tolist()
-    draw_logo(non_binder_peptides, aa_len=9, figure_name=f'non_binder({len(non_binder_peptides)}).png')
+    draw_logo(non_binder_peptides, aa_len=aa_len, figure_name=f'non_binder({len(non_binder_peptides)}).png')
 
 if __name__ == '__main__':
     # NetMHCpan NetMHCIIpan MixMHCpred MixMHC2pred MHCflurry BigMHC
-    tools = ['MHCflurry', 'NetMHCpan']
-    result_df = run(tools=tools, min_seq_length=8, max_seq_length=15)
-    # result_df = pd.read_csv(f'./output/sequentially.csv')
-    draw_best_allele_logo(result_df)
+    # tools = ['MHCflurry', 'NetMHCpan']
+    # result_df = run(tools=tools, min_seq_length=8, max_seq_length=15)
+    result_df = pd.read_csv(f'./output/sequentially_MHCflurry_NetMHCpan.csv')
+    draw_best_allele_logo(result_df, aa_len=9)
+
+    peptides = pd.read_csv('./input/peptides.csv', header=None).values[:, 0].tolist()
+    draw_logo(peptides, aa_len=9, figure_name='all_peptides.png')
     print('Have a nice day.')
