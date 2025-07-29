@@ -140,7 +140,7 @@ def draw_logo(sequences, aa_len=9, figure_name=None):
 
     # Hobohm1 + KL + depletion
     unique_seqs, seq_weights = hobohm1_clustering(filtered_sequences)
-    count_df = pd.DataFrame(np.zeros((9, len(aas))), index=range(9), columns = aas)
+    count_df = pd.DataFrame(np.zeros((aa_len, len(aas))), index=range(aa_len), columns = aas)
     for seq, weight in zip(filtered_sequences, seq_weights):
         for pos, aa in enumerate(seq):
             count_df.loc[pos, aa] += weight
