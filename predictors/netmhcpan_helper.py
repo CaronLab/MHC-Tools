@@ -180,6 +180,7 @@ class NetMHCpanHelper(BaseHelper):
         else:
             allele_idx = 1
             peptide_idx = 2
+            core_idx = 4
             el_score_idx = 8
             el_rank_idx = 9
             aff_score_idx = 11
@@ -206,13 +207,24 @@ class NetMHCpanHelper(BaseHelper):
                 binder = 'Weak'
             else:
                 binder = 'Non-binder'
+            if self.mhc_class == 'I':
+                self.predictions[reverse_lookup[peptide]][allele] = {
+                    'el_rank': el_rank,
+                    'el_score': el_score,
+                    'aff_rank': aff_rank,
+                    'aff_score': aff_score,
+                    'aff_nM': aff_nM,
+                    'binder': binder}
+            else:
+                self.predictions[reverse_lookup[peptide]][allele] = {
+                    'core': line[core_idx],
+                    'el_rank': el_rank,
+                    'el_score': el_score,
+                    'aff_rank': aff_rank,
+                    'aff_score': aff_score,
+                    'aff_nM': aff_nM,
+                    'binder': binder}
 
-            self.predictions[reverse_lookup[peptide]][allele] = {'el_rank': el_rank,
-                                                 'el_score': el_score,
-                                                 'aff_rank': aff_rank,
-                                                 'aff_score': aff_score,
-                                                 'aff_nM': aff_nM,
-                                                 'binder': binder}
 
     def _aggregate_netmhcpan_results(self):
         for job in self.jobs:
@@ -237,20 +249,35 @@ class NetMHCpanHelper(BaseHelper):
     def predict_df(self):
         print(f'Running {self.tool_name}')
         self.make_predictions()
-        df_columns = ['Peptide', 'Allele', 'EL_score', 'EL_Rank', 'Aff_Score', 'Aff_Rank', 'Aff_nM', 'Binder']
+        if self.mhc_class == 'I':
+            df_columns = ['Peptide', 'Allele', 'EL_score', 'EL_Rank', 'Aff_Score', 'Aff_Rank', 'Aff_nM', 'Binder']
+        else:
+            df_columns = ['Peptide', 'Allele', 'Core', 'EL_score', 'EL_Rank', 'Aff_Score', 'Aff_Rank', 'Aff_nM', 'Binder']
         data = []
         for allele in self.alleles:
             normed_allele = get_normalized_allele_name(allele)
             for pep in self.peptides:
                 # netmhc_pep = self.netmhcpan_peptides[pep]
-                data.append([pep,
-                             normed_allele,
-                             self.predictions[pep][allele]['el_score'],
-                             self.predictions[pep][allele]['el_rank'],
-                             self.predictions[pep][allele]['aff_score'],
-                             self.predictions[pep][allele]['aff_rank'],
-                             self.predictions[pep][allele]['aff_nM'],
-                             self.predictions[pep][allele]['binder']])
+                if self.mhc_class == 'I':
+                    data.append([pep,
+                                 normed_allele,
+                                 self.predictions[pep][allele]['el_score'],
+                                 self.predictions[pep][allele]['el_rank'],
+                                 self.predictions[pep][allele]['aff_score'],
+                                 self.predictions[pep][allele]['aff_rank'],
+                                 self.predictions[pep][allele]['aff_nM'],
+                                 self.predictions[pep][allele]['binder']])
+                else:
+                    data.append([pep,
+                                 normed_allele,
+                                 self.predictions[pep][allele]['core'],
+                                 self.predictions[pep][allele]['el_score'],
+                                 self.predictions[pep][allele]['el_rank'],
+                                 self.predictions[pep][allele]['aff_score'],
+                                 self.predictions[pep][allele]['aff_rank'],
+                                 self.predictions[pep][allele]['aff_nM'],
+                                 self.predictions[pep][allele]['binder']])
+
         self.pred_df = pd.DataFrame(data=data, columns=df_columns)
         return self.pred_df
 

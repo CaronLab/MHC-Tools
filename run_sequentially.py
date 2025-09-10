@@ -11,8 +11,11 @@ from utils.logo import draw_logo
 
 
 def run(tools=['NetMHCpan', 'MHCflurry'], min_seq_length=8, max_seq_length=15):
-
-    alleles = pd.read_csv('input/alleles-I.csv', header=None).values[:, 0].tolist()
+    if tools is None or len(tools) == 0:
+        print('No tools specified.')
+        return None
+    mhc_class = 'I' if tools[0] in ['NetMHCpan', 'MixMHCpred', 'BigMHC'] else 'II'
+    alleles = pd.read_csv(f'input/alleles-{mhc_class}.csv', header=None).values[:, 0].tolist()
     alleles = [allele.replace('_', '-') for allele in alleles]
     peptides = pd.read_csv('./input/peptides.csv', header=None).values[:, 0].tolist()
     peptides = filter_peptides_by_length(peptides, min_seq_length, max_seq_length)
@@ -20,13 +23,13 @@ def run(tools=['NetMHCpan', 'MHCflurry'], min_seq_length=8, max_seq_length=15):
     result_df = None
     for tool in tools:
         if tool == 'NetMHCpan':
-            pred_df = NetMHCpanHelper(peptides, alleles, mhc_class='I').predict_df()
+            pred_df = NetMHCpanHelper(peptides, alleles, mhc_class=mhc_class).predict_df()
         elif tool == 'NetMHCIIpan':
-            pred_df = NetMHCpanHelper(peptides, alleles, mhc_class='II').predict_df()
+            pred_df = NetMHCpanHelper(peptides, alleles, mhc_class=mhc_class).predict_df()
         elif tool == 'MixMHCpred':
-            pred_df = MixMhcPredHelper(peptides, alleles, mhc_class='I').predict_df()
+            pred_df = MixMhcPredHelper(peptides, alleles, mhc_class=mhc_class).predict_df()
         elif tool == 'MixMHC2pred':
-            pred_df = MixMhcPredHelper(peptides, alleles, mhc_class='II').predict_df()
+            pred_df = MixMhcPredHelper(peptides, alleles, mhc_class=mhc_class).predict_df()
         elif tool == 'MHCflurry':
             pred_df = MhcFlurryHelper(peptides, alleles).predict_df()
         elif tool == 'BigMHC':
@@ -44,7 +47,10 @@ def run(tools=['NetMHCpan', 'MHCflurry'], min_seq_length=8, max_seq_length=15):
         all_binding_alleles.rename(columns={'Allele': 'Alleles'}, inplace=True)
         best_allele_df.rename(columns={'Allele': 'Best_Allele'}, inplace=True)
         best_allele_df = best_allele_df.merge(all_binding_alleles, on='Peptide', how='left')
-        best_allele_df = best_allele_df[['Peptide', 'Best_Allele', 'EL_Rank', 'Binder', 'Alleles']]
+        if mhc_class == 'I':
+            best_allele_df = best_allele_df[['Peptide', 'Best_Allele', 'EL_Rank', 'Binder', 'Alleles']]
+        else:
+            best_allele_df = best_allele_df[['Peptide', 'Best_Allele', 'Core', 'EL_Rank', 'Binder', 'Alleles']]
 
         if result_df is None:
             result_df = best_allele_df
@@ -84,9 +90,11 @@ if __name__ == '__main__':
     # NetMHCpan NetMHCIIpan MixMHCpred MixMHC2pred MHCflurry BigMHC
     # tools = ['MHCflurry', 'NetMHCpan']
     # result_df = run(tools=tools, min_seq_length=8, max_seq_length=15)
-    result_df = pd.read_csv(f'./output/sequentially_MHCflurry_NetMHCpan.csv')
-    draw_best_allele_logo(result_df, aa_len=9)
+    tools = ['NetMHCIIpan', 'MixMHC2pred']
+    result_df = run(tools=tools, min_seq_length=9, max_seq_length=25)
+    # result_df = pd.read_csv(f'./output/sequentially_MHCflurry_NetMHCpan.csv')
+    # draw_best_allele_logo(result_df, aa_len=9)
 
-    peptides = pd.read_csv('./input/peptides.csv', header=None).values[:, 0].tolist()
-    draw_logo(peptides, aa_len=9, figure_name='all_peptides.png')
+    # peptides = pd.read_csv('./input/peptides.csv', header=None).values[:, 0].tolist()
+    # draw_logo(peptides, aa_len=8, figure_name='all_peptides.png')
     print('Have a nice day.')

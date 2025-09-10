@@ -87,7 +87,10 @@ class MixMhcPredHelper(BaseHelper):
             pred.append(line)
         result_df = pd.DataFrame(pred[1:], columns=pred[0])
 
-        df_columns = ['Peptide', 'Allele', 'EL_Rank', 'Binder']
+        if self.mhc_class == 'I':
+            df_columns = ['Peptide', 'Allele', 'EL_Rank', 'Binder']
+        else:
+            df_columns = ['Peptide', 'Allele', 'Core', 'EL_Rank', 'Binder']
         data = []
         for i in range(len(result_df)):
             for j in range(len(result_df.columns)):
@@ -103,7 +106,10 @@ class MixMhcPredHelper(BaseHelper):
                 else:
                     el_rank = float(el_rank)
                     binder = 'Strong' if el_rank <= 0.5 else 'Weak' if el_rank <= 2.0 else 'Non-binder'
-                data.append([peptide, allele, el_rank, binder])
+                if self.mhc_class == 'I':
+                    data.append([peptide, allele, el_rank, binder])
+                else:
+                    data.append([peptide, allele, result_df.loc[i, 'Core_best'], el_rank, binder])
         self.pred_df = pd.DataFrame(data=data, columns=df_columns)
         self.pred_df.loc[self.pred_df['EL_Rank'] == 'NA', 'EL_Rank'] = 100
         return self.pred_df
