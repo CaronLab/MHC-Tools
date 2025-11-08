@@ -19,5 +19,5 @@ def run_netmhcpan(min_seq_length, max_seq_length, mhc_class='I'):
 
 
 if __name__ == '__main__':
-    run_netmhcpan(8, 15, 'I')
+    run_netmhcpan(8, 14, 'I')
     print('Have a nice day.')
