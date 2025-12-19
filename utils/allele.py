@@ -8,7 +8,8 @@ def prepare_class_I_alleles(alleles: List[str], avail_alleles: List[str]):
     prepared_alleles = []
     for allele in alleles:
         try:
-            allele = normalize_allele_name(allele)
+            allele = normalize_allele_name(allele).replace('*', '')
+            allele = allele.replace('H-2-', 'H2-')
             if allele in avail_alleles:
                 prepared_alleles.append(allele)
             else:

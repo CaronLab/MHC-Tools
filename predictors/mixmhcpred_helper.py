@@ -42,9 +42,9 @@ class MixMhcPredHelper(BaseHelper):
         avail_allele_path = Path(__file__).parent.parent/'third_party'/'MixMHCpred-3.0'/'lib'/'alleles_list.txt'
         avail_alleles = [line.split()[0] for line in open(avail_allele_path).readlines()][1:]
 
-        avail_alleles = [mhcgnomes.parse(allele).to_string() for allele in avail_alleles]
+        avail_alleles = [mhcgnomes.parse(allele).to_string().replace('*', '') for allele in avail_alleles]
         std_alleles = prepare_class_I_alleles(alleles, avail_alleles)
-        return [a.replace('HLA-', '').replace('*', '').replace(':', '') for a in std_alleles]
+        return [a.replace('HLA-', '').replace(':', '') for a in std_alleles]
 
     def _format_class_II_alleles(self, alleles: List[str]):
         avail_allele_path = Path(__file__).parent.parent/'third_party'/'MixMHC2pred-2.0'/'PWMdef'/'Alleles_list_Human.txt'

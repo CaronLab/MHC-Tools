@@ -94,9 +94,9 @@ class NetMHCpanHelper(BaseHelper):
         avail_allele_path = Path(__file__).parent.parent/'third_party'/'netMHCpan-4.1'/'Linux_x86_64'/'data'/'MHC_pseudo.dat'
         avail_alleles = [line.split()[0].replace(':', '') for line in open(avail_allele_path).readlines()]
 
-        avail_alleles = [mhcgnomes.parse(allele).to_string() for allele in avail_alleles]
+        avail_alleles = [mhcgnomes.parse(allele).to_string().replace('*', '') for allele in avail_alleles]
         std_alleles = prepare_class_I_alleles(alleles, avail_alleles)
-        return [a.replace('*', '').replace(':', '') for a in std_alleles]
+        return [a.replace(':', '') for a in std_alleles]
 
     def _format_class_II_alleles(self, alleles: List[str]):
         avail_allele_path = Path(__file__).parent.parent/'third_party'/'netMHCIIpan-4.3'/'data'/'pseudosequence.2023.all.X.dat'
