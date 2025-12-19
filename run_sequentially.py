@@ -14,7 +14,7 @@ def run(tools=['NetMHCpan', 'MHCflurry'], min_seq_length=8, max_seq_length=15, p
     if tools is None or len(tools) == 0:
         print('No tools specified.')
         return None
-    mhc_class = 'I' if tools[0] in ['NetMHCpan', 'MixMHCpred', 'BigMHC'] else 'II'
+    mhc_class = 'I' if tools[0] in ['NetMHCpan', 'MixMHCpred', 'BigMHC', 'MHCflurry'] else 'II'
     alleles = pd.read_csv(f'input/alleles-{mhc_class}.csv', header=None).values[:, 0].tolist()
     alleles = [allele.replace('_', '-') for allele in alleles]
     peptides = pd.read_csv('./input/' + peptide_file, header=None).values[:, 0].tolist()
@@ -88,7 +88,7 @@ def draw_best_allele_logo(result_df, aa_len=9):
 
 if __name__ == '__main__':
     # NetMHCpan NetMHCIIpan MixMHCpred MixMHC2pred MHCflurry BigMHC
-    tools = ['NetMHCpan']
+    tools = ['MHCflurry']
     result_df = run(tools=tools, min_seq_length=8, max_seq_length=14, peptide_file='intersection_1.txt')
     # tools = ['NetMHCIIpan', 'MixMHC2pred']
     # result_df = run(tools=tools, min_seq_length=9, max_seq_length=25)
